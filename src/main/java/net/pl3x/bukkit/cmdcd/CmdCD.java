@@ -1,5 +1,6 @@
 package net.pl3x.bukkit.cmdcd;
 
+import net.pl3x.bukkit.cmdcd.configuration.Config;
 import net.pl3x.bukkit.cmdcd.configuration.Lang;
 import net.pl3x.purpur.event.ExecuteCommandEvent;
 import org.bukkit.command.Command;
@@ -61,6 +62,9 @@ public class CmdCD extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        Config.reload(this);
+        Lang.reload(this);
+
         new BukkitRunnable() {
             @Override
             public void run() {

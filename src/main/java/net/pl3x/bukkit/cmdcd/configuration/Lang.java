@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 
 public class Lang {
-    public static String YOU_ARE_ON_COOLDOWN = "&cThat command is currently on cooldown";
+    public static String YOU_ARE_ON_COOLDOWN = "&cThat command is currently on cooldown for {remaining}";
 
     private static void init() {
         YOU_ARE_ON_COOLDOWN = getString("you-are-on-cooldown", YOU_ARE_ON_COOLDOWN);
