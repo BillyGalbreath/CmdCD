@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 public class CmdCD extends JavaPlugin {
     private static final Map<Command, Map<UUID, Long>> COOLDOWNS = new HashMap<>();
@@ -33,6 +34,18 @@ public class CmdCD extends JavaPlugin {
     public static boolean isOnCooldown(Command command, UUID uuid) {
         Map<UUID, Long> cooldowns = COOLDOWNS.get(command);
         return cooldowns != null && cooldowns.containsKey(uuid);
+    }
+
+    public static int getSecondsRemaining(Command command, UUID uuid) {
+        Map<UUID, Long> cooldowns = COOLDOWNS.get(command);
+        if (cooldowns == null) {
+            return 0;
+        }
+        Long remaining = cooldowns.get(uuid);
+        if (remaining == null) {
+            return 0;
+        }
+        return (int) (remaining / 1000);
     }
 
     public static Map<Command, Long> getCooldowns(UUID uuid) {
@@ -69,12 +82,46 @@ public class CmdCD extends JavaPlugin {
             @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
             public void onPlayerCommand(ExecuteCommandEvent event) {
                 if (event.getSender() instanceof Player) {
-                    if (isOnCooldown(event.getCommand(), ((Player) event.getSender()).getUniqueId())) {
-                        Lang.send(event.getSender(), Lang.YOU_ARE_ON_COOLDOWN);
+                    int seconds = getSecondsRemaining(event.getCommand(), ((Player) event.getSender()).getUniqueId());
+                    if (seconds > 0) {
+                        Lang.send(event.getSender(), Lang.YOU_ARE_ON_COOLDOWN
+                                .replace("{seconds}", String.valueOf(seconds))
+                                .replace("{remaining}", formatSeconds(seconds))
+                        );
                         event.setCancelled(true);
                     }
                 }
             }
         }, this);
+    }
+
+    public static String formatSeconds(int seconds) {
+        long hours = TimeUnit.SECONDS.toHours(seconds);
+        seconds -= TimeUnit.HOURS.toSeconds(hours);
+
+        long minutes = TimeUnit.SECONDS.toMinutes(seconds);
+        seconds -= TimeUnit.MINUTES.toSeconds(minutes);
+
+        StringBuilder msg = new StringBuilder();
+        if (hours != 0) {
+            msg.append(hours).append(" hour");
+            if (hours != 1) {
+                msg.append("s");
+            }
+        }
+        if (minutes != 0) {
+            msg.append(minutes).append(" minute");
+            if (minutes != 1) {
+                msg.append("s");
+            }
+        }
+        if (seconds != 0) {
+            msg.append(seconds).append(" second");
+            if (seconds != 1) {
+                msg.append("s");
+            }
+        }
+
+        return msg.toString();
     }
 }
