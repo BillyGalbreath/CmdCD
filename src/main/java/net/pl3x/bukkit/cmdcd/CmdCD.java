@@ -42,11 +42,11 @@ public class CmdCD extends JavaPlugin {
         if (cooldowns == null) {
             return 0;
         }
-        Long remaining = cooldowns.get(uuid);
-        if (remaining == null) {
+        Long expireTime = cooldowns.get(uuid);
+        if (expireTime == null) {
             return 0;
         }
-        return (int) (remaining / 1000);
+        return (int) ((expireTime - System.currentTimeMillis()) / 1000);
     }
 
     public static Map<Command, Long> getCooldowns(UUID uuid) {
@@ -90,7 +90,7 @@ public class CmdCD extends JavaPlugin {
                     if (seconds > 0) {
                         Lang.send(event.getSender(), Lang.YOU_ARE_ON_COOLDOWN
                                 .replace("{seconds}", String.valueOf(seconds))
-                                .replace("{remaining}", formatSeconds(seconds))
+                                .replace("{remaining}", formatRemaining(seconds))
                         );
                         event.setCancelled(true);
                     }
@@ -99,7 +99,7 @@ public class CmdCD extends JavaPlugin {
         }, this);
     }
 
-    public static String formatSeconds(int seconds) {
+    public static String formatRemaining(int seconds) {
         long hours = TimeUnit.SECONDS.toHours(seconds);
         seconds -= TimeUnit.HOURS.toSeconds(hours);
 
@@ -114,12 +114,18 @@ public class CmdCD extends JavaPlugin {
             }
         }
         if (minutes != 0) {
+            if (!msg.toString().isEmpty()) {
+                msg.append(" ");
+            }
             msg.append(minutes).append(" minute");
             if (minutes != 1) {
                 msg.append("s");
             }
         }
         if (seconds != 0) {
+            if (!msg.toString().isEmpty()) {
+                msg.append(" ");
+            }
             msg.append(seconds).append(" second");
             if (seconds != 1) {
                 msg.append("s");
