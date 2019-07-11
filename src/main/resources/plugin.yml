@@ -4,15 +4,3 @@ version: "${project.version}"
 description: "${project.artifactId} Bukkit Plugin"
 author: "BillyGalbreath"
 api-version: "1.13"
-
-commands:
-  stub:
-    description: cmdcd
-    usage: /<command> (reload)
-    aliases:
-      - test
-
-permissions:
-  command.stub:
-    description: Allows to reload the configs
-    default: op
