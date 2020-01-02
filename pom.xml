@@ -14,7 +14,7 @@
         <dependency>
             <groupId>net.pl3x.purpur</groupId>
             <artifactId>purpur-api</artifactId>
-            <version>1.14.2-R0.1-SNAPSHOT</version>
+            <version>1.15.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
